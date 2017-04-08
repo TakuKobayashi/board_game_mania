@@ -35,6 +35,7 @@ body{
   height: 360px;
 }
 .squarebox{
+  position: relative;
   width: 312px;
   height: 172px;
   margin: 0;
@@ -45,7 +46,47 @@ body{
 .squareimg{
   margin-top: 50px;
 }
-.titlebox{
-  width: 320px;
+.titlebox1{
+  position: absolute;
+  bottom: 0;
+  width: 312px;
   height: 40px;
+  color: #FFF;
+    background-color: #504277;
+}
+.titlebox2{
+  position: absolute;
+  bottom: 0;
+  right:0;
+  width: 40px;
+  height: 172px;
+  color: #FFF;
+  background-color: #fff094;
+  z-index: 100;
+}
+.titlebox3{
+  position: absolute;
+    bottom: 0;
+  width: 40px;
+  height: 172px;
+  color: #FFF;
+  background-color: #428365;
+}
+.eventbox{
+  background-image: url(../img/dummy.png);
+  background-size: cover;
+}
+.eventbox_info{
+  color: #fff;
+  font-size: 12px;
+  text-align: left;
+  padding: 10px;
+  line-height: 1.8;
+  background-color: rgba(0,0,0,0.65);
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+.event_title,.event_place,.event_date{
+  padding: 0 10px;
 }
