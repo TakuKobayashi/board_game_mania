@@ -1,0 +1,36 @@
+<div class="mainbox">
+    <div class="colbox">
+      <div class="squarebox"><img class="squareimg" src="img/icon04.png"></div>
+      <div class="squarebox"><img src="img/text01.png"><div class="titlebox1">&nbsp;</div></div>
+      <div class="squarebox"><img sytle="margin-top:10px;" class="squareimg" src="img/icon01.png"></div>
+      <div class="squarebox"></div>
+    </div>
+    <div class="middlebox">
+        <div class="middlesubbox">
+          <div class="squarebox"><img class="squareimg" src="img/icon03.png"></div>
+          <div class="squarebox"><img src="img/text.02.png"><div class="titlebox2">&nbsp;</div></div>
+    </div>
+    <div class="videobox">
+      <iframe id="ytplayer" type="text/html" width="640" height="360"
+              src="http://www.youtube.com/embed/<%= @response.dig(:video, :id) %>?autoplay=1"
+              frameborder="0"></iframe>
+    </div>
+    <div class="middlebox">
+        <div class="middlesubbox">
+          <div class="squarebox"><img class="squareimg" src="img/icon02.png"><div class="titlebox3">&nbsp;</div></div>
+          <div class="squarebox"></div>
+    </div>
+    </div>
+    <div class="colbox">
+      <div class="squarebox"></div>
+      <div class="squarebox eventbox">
+        <div class="eventbox_info">
+        <div class="event_title"><%= @response[:eventPages].first[:description] %></div>
+        <div class="event_place"><i class="fa fa-map-marker"></i><%= @response[:eventPages].first[:place] %></div>
+        <div class="event_date"><i class="fa fa-calendar-o"></i><%= @response[:eventPages].first[:startedAt] %></div>
+        </div>
+      </div>
+      <div class="squarebox"></div>
+      <div class="squarebox"></div>
+    </div>
+</div>
