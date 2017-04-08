@@ -8,6 +8,7 @@ class CreateYoutubeVideos < ActiveRecord::Migration[5.0]
       t.text :description
       t.string :thumnail_image_url, null: false, default: ''
       t.datetime :published_at
+      t.integer :comment_count, null: false, default: 0
       t.integer :dislike_count, null: false, default: 0
       t.integer :like_count, null: false, default: 0
       t.integer :favorite_count, null: false, default: 0

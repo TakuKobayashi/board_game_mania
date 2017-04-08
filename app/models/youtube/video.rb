@@ -10,6 +10,7 @@
 #  description         :text(65535)
 #  thumnail_image_url  :string(255)      default(""), not null
 #  published_at        :datetime
+#  comment_count       :integer          default("0"), not null
 #  dislike_count       :integer          default("0"), not null
 #  like_count          :integer          default("0"), not null
 #  favorite_count      :integer          default("0"), not null
@@ -27,56 +28,56 @@ class Youtube::Video < ApplicationRecord
     videos = []
     id_and_tags = {}
     youtube_video.items.each do |item|
-      video = YoutubeVideo.new(
+      video = Youtube::Video.new(
         video_id: item.id,
-        title: YoutubeVideo.basic_sanitize(item.snippet.title),
-        description: YoutubeVideo.basic_sanitize(item.snippet.description),
+        title: Youtube::Video.basic_sanitize(item.snippet.title),
+        description: Youtube::Video.basic_sanitize(item.snippet.description),
         published_at: item.snippet.published_at,
         thumnail_image_url: item.snippet.thumbnails.default.url,
-        comment_count: item.statistics.comment_count.to_i,
-        dislike_count: item.statistics.dislike_count.to_i,
-        like_count: item.statistics.like_count.to_i,
-        favorite_count: item.statistics.favorite_count.to_i,
-        view_count: item.statistics.view_count.to_i
+        comment_count: item.statistics.try(:comment_count).to_i,
+        dislike_count: item.statistics.try(:dislike_count).to_i,
+        like_count: item.statistics.try(:like_count).to_i,
+        favorite_count: item.statistics.try(:favorite_count).to_i,
+        view_count: item.statistics.try(:view_count).to_i
       )
       id_and_tags[item.id] = item.snippet.tags
       videos << video
     end
     updates = [:published_at]
-    YoutubeVideo.import(videos, on_duplicate_key_update: updates)
-    YoutubeVideo.import_tags(id_and_tags)
+    Youtube::Video.import(videos, on_duplicate_key_update: updates)
+    Youtube::Video.import_tags(id_and_tags)
   end
 
   def self.import_tags(video_id_and_tags)
-    video_ids = YoutubeVideo.where(video_id: video_id_and_tags.keys).pluck(:id, :video_id)
+    video_ids = Youtube::Video.where(video_id: video_id_and_tags.keys).pluck(:id, :video_id)
     tags = video_ids.map do |id, video_id|
       if video_id_and_tags[video_id].blank?
         nil
       else
         results = []
         video_id_and_tags[video_id].each do |tag|
-          sanitized = YoutubeVideo.basic_sanitize(tag)
+          sanitized = Youtube::Video.basic_sanitize(tag)
           next if sanitized.blank?
           sanitize_split_tags = [sanitized]
           if sanitized.length > 255
             sanitize_split_tags = sanitized.split(" ")
           end
           results += sanitize_split_tags.map do |t|
-            YoutubeVideoTag.new(youtube_video_id: id, tag: t)
+            Youtube::VideoTag.new(youtube_video_id: id, tag: t)
           end
         end
         results
       end
     end.flatten.compact
-    YoutubeVideoTag.import(tags, on_duplicate_key_update: [:youtube_video_id, :tag])
+    Youtube::VideoTag.import(tags, on_duplicate_key_update: [:youtube_video_id, :tag])
   end
 
   def import_related_video!(youtube_video)
-    YoutubeVideo.import_video!(youtube_video)
-    video_ids = YoutubeVideo.where(video_id: youtube_video.items.map(&:id)).pluck(:id)
+    Youtube::Video.import_video!(youtube_video)
+    video_ids = Youtube::Video.where(video_id: youtube_video.items.map(&:id)).pluck(:id)
     relateds = video_ids.map do |to_id|
-      YoutubeVideoRelated.new(youtube_video_id: self.id, to_youtube_video_id: to_id)
+      Youtube::VideoRelated.new(youtube_video_id: self.id, to_youtube_video_id: to_id)
     end
-    YoutubeVideoRelated.import(relateds)
+    Youtube::VideoRelated.import(relateds)
   end
 end

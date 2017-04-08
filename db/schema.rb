@@ -12,11 +12,6 @@
 
 ActiveRecord::Schema.define(version: 20170408081646) do
 
-  create_table "youtube_tags", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer "youtube_video_id", null: false
-    t.string  "tag",              null: false
-  end
-
   create_table "youtube_video_relateds", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "youtube_video_id",    null: false
     t.integer "to_youtube_video_id", null: false
@@ -39,6 +34,7 @@ ActiveRecord::Schema.define(version: 20170408081646) do
     t.text     "description",         limit: 65535
     t.string   "thumnail_image_url",                default: "", null: false
     t.datetime "published_at"
+    t.integer  "comment_count",                     default: 0,  null: false
     t.integer  "dislike_count",                     default: 0,  null: false
     t.integer  "like_count",                        default: 0,  null: false
     t.integer  "favorite_count",                    default: 0,  null: false
