@@ -16,9 +16,15 @@ class DiceController < ApplicationController
           thumnail: rel_video.thumnail_image_url
         }
       },
-      eventPages: events&.sample(3)
+      eventPages: events&.sample(3).map { |event|
+        {
+          url: event[:event_url],
+          description: event[:title],
+          place: "#{event[:address]} #{event[:place]}"
+        }
+      }
     }
-    
+
     render json: response
   end
 end

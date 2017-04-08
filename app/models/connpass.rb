@@ -11,6 +11,8 @@ class Connpass
       {
         event_url: event["event_url"],
         title: event["title"],
+        address: event["address"],
+        place: event["place"],
         started_at: Time.parse(event["started_at"]),
       }
     }
