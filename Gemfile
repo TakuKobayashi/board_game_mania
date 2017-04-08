@@ -39,6 +39,11 @@ gem 'annotate'
 gem 'kaminari'
 gem 'activerecord-import'
 
+gem 'google-api-client', '~> 0.11'
+gem 'youtube-dl.rb'
+
+gem 'httpclient'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri
