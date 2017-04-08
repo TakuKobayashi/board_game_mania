@@ -1,0 +1,51 @@
+body{
+  background-color: #ccc;
+}
+.mainbox {
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+  width: 1280px;
+  height: 720px;
+  background-color: #ccc;
+}
+.colbox {
+    display: flex;
+  width: 1280px;
+  height: 180px;
+  flex-direction:row;
+}
+.middlebox{
+  width: 1280px;
+  height: 360px;
+  margin: 0;
+  border: 0;
+}
+.videobox{
+  float: left;
+  width: 640px;
+  height: 360px;
+  margin: 0;
+  border: 0;
+  background-color: #000;
+}
+.middlesubbox{
+  float: left;
+  width: 319px;
+  height: 360px;
+}
+.squarebox{
+  width: 312px;
+  height: 172px;
+  margin: 0;
+  padding: 0;
+  background-color: #FFF;
+  border: 4px solid #CCC;
+}
+.squareimg{
+  margin-top: 50px;
+}
+.titlebox{
+  width: 320px;
+  height: 40px;
+}
