@@ -44,10 +44,10 @@ body{
   border: 4px solid #333;
 }
 .squareimg{
-  margin-top: 50px;
+  margin-top: 22px;
 }
 .squareimg-side{
-  margin-top: 35px;
+  margin-top: 37px;
 }
 .titlebox1{
   position: absolute;
@@ -91,7 +91,7 @@ body{
   text-align: left;
   padding: 10px;
   line-height: 1.8;
-  background-color: rgba(0,0,0,0.65);
+  background-color: rgba(0,0,0,0.35);
   width: 94%;
   position: absolute;
   bottom: 0;
@@ -105,15 +105,15 @@ body{
 .squarebox .text01 {
   position: absolute;
   bottom: 55px;
-  left: 30px;
+  left: 50px;
 }
 .squarebox .text02 {
   position: absolute;
-  top: 10px;
+  top: 4px;
   left: 150px;
 }
 .squarebox .text03 {
   position: absolute;
-  top: 6px;
+  top: 11px;
   left: 60px;
 }
