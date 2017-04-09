@@ -10,7 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170408081646) do
+ActiveRecord::Schema.define(version: 20170409002943) do
+
+  create_table "events", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string   "event_id",                           null: false
+    t.string   "type",                               null: false
+    t.string   "keyword",                            null: false
+    t.string   "title",                              null: false
+    t.string   "url",                                null: false
+    t.string   "description",                        null: false
+    t.datetime "started_at",                         null: false
+    t.datetime "ended_at",                           null: false
+    t.integer  "limit",                  default: 0, null: false
+    t.string   "address",                            null: false
+    t.string   "place",                              null: false
+    t.float    "lat",         limit: 24
+    t.float    "lon",         limit: 24
+    t.string   "owner_id",                           null: false
+    t.string   "owner_name"
+    t.index ["event_id", "type"], name: "index_events_on_event_id_and_type", unique: true, using: :btree
+    t.index ["keyword"], name: "index_events_on_keyword", using: :btree
+    t.index ["started_at", "ended_at"], name: "index_events_on_started_at_and_ended_at", using: :btree
+  end
 
   create_table "youtube_video_relateds", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "youtube_video_id",    null: false
