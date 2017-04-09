@@ -10,11 +10,11 @@
 #  description         :text(65535)
 #  thumnail_image_url  :string(255)      default(""), not null
 #  published_at        :datetime
-#  comment_count       :integer          default("0"), not null
-#  dislike_count       :integer          default("0"), not null
-#  like_count          :integer          default("0"), not null
-#  favorite_count      :integer          default("0"), not null
-#  view_count          :integer          default("0"), not null
+#  comment_count       :integer          default(0), not null
+#  dislike_count       :integer          default(0), not null
+#  like_count          :integer          default(0), not null
+#  favorite_count      :integer          default(0), not null
+#  view_count          :integer          default(0), not null
 #
 # Indexes
 #
