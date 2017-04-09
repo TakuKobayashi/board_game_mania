@@ -52,7 +52,9 @@ body{
   width: 312px;
   height: 40px;
   color: #FFF;
-    background-color: #504277;
+  background-color: #504277;
+  border-top: 6px solid #CCC;
+  border-bottom: 2px solid #CCC;
 }
 .titlebox2{
   position: absolute;
@@ -62,6 +64,8 @@ body{
   height: 172px;
   color: #FFF;
   background-color: #fff094;
+  border-left: 6px solid #CCC;
+  border-right: 2px solid #CCC;
   z-index: 100;
 }
 .titlebox3{
@@ -71,6 +75,8 @@ body{
   height: 172px;
   color: #FFF;
   background-color: #428365;
+  border-right: 6px solid #CCC;
+  border-left: 2px solid #CCC;
 }
 .eventbox{
   background-image: url(../img/dummy.png);
@@ -89,4 +95,7 @@ body{
 }
 .event_title,.event_place,.event_date{
   padding: 0 10px;
+}
+.event_title{
+  text-overflow: ellipsis;
 }
