@@ -28,6 +28,7 @@ body{
   margin: 0;
   border: 0;
   background-color: #000;
+  background-image: url(../img/top-main.png);
 }
 .middlesubbox{
   float: left;
