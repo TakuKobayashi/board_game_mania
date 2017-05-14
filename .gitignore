@@ -25,6 +25,7 @@ Thumbs.db
 vendor/bundle/
 .bundle/config
 config/apiconfig.yml
+config/database.yml
 
 # emacs
 \#*\#
