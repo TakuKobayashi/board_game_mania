@@ -35,4 +35,8 @@ namespace :crawl do
       end
     end while page_token.present?
   end
+
+  task event_crawl: :environment do
+    Event.import_events!
+  end
 end

@@ -13,24 +13,27 @@
 ActiveRecord::Schema.define(version: 20170409002943) do
 
   create_table "events", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string   "event_id",                           null: false
-    t.string   "type",                               null: false
-    t.string   "keyword",                            null: false
-    t.string   "title",                              null: false
-    t.string   "url",                                null: false
-    t.string   "description",                        null: false
-    t.datetime "started_at",                         null: false
-    t.datetime "ended_at",                           null: false
-    t.integer  "limit",                  default: 0, null: false
-    t.string   "address",                            null: false
-    t.string   "place",                              null: false
-    t.float    "lat",         limit: 24
-    t.float    "lon",         limit: 24
-    t.string   "owner_id",                           null: false
+    t.string   "event_id"
+    t.string   "type"
+    t.string   "title",                        null: false
+    t.string   "url",                          null: false
+    t.string   "shortener_url"
+    t.text     "description",    limit: 65535
+    t.datetime "started_at",                   null: false
+    t.datetime "ended_at"
+    t.integer  "limit_number"
+    t.string   "address",                      null: false
+    t.string   "place",                        null: false
+    t.float    "lat",            limit: 24
+    t.float    "lon",            limit: 24
+    t.string   "owner_id"
+    t.string   "owner_nickname"
     t.string   "owner_name"
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
     t.index ["event_id", "type"], name: "index_events_on_event_id_and_type", unique: true, using: :btree
-    t.index ["keyword"], name: "index_events_on_keyword", using: :btree
     t.index ["started_at", "ended_at"], name: "index_events_on_started_at_and_ended_at", using: :btree
+    t.index ["title"], name: "index_events_on_title", using: :btree
   end
 
   create_table "youtube_video_relateds", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
