@@ -1,36 +1,40 @@
 <div class="mainbox">
-    <div class="colbox">
-      <div class="squarebox"><img class="squareimg" src="img/icon04.png"></div>
-      <div class="squarebox"><img src="img/text01.png"><div class="titlebox1">&nbsp;</div></div>
-      <div class="squarebox"><img sytle="margin-top:10px;" class="squareimg" src="img/icon01.png"></div>
-      <div class="squarebox"></div>
+  <div class="colbox">
+    <div class="squarebox"><%= image_tag("icon04.png", class: "squareimg") %></div>
+    <div class="squarebox"><%= image_tag("text01.png", class: "text01") %><div class="titlebox1">&nbsp;</div></div>
+    <div class="squarebox"><%= image_tag("icon01.png", class: "squareimg") %></div>
+    <div class="squarebox"><%= image_tag("icon06.png", class: "squareimg") %></div>
+  </div>
+  <div class="middlebox">
+    <div class="middlesubbox">
+      <div class="squarebox"><%= image_tag("icon03.png", class: "squareimg") %></div>
+      <div class="squarebox"><%= image_tag("text02.png", class: "text02") %><div class="titlebox2">&nbsp;</div></div>
+    </div>ß
+  </div>
+  <div class="videobox"></div>
+  <div class="middlebox">
+    <div class="middlesubbox">
+      <div class="squarebox"><div class="titlebox3">&nbsp;</div><%= image_tag("text03.png", class: "text03") %></div>
+      <div class="squarebox"><%= image_tag("icon05.png", class: "squareimg-side") %></div>
     </div>
-    <div class="middlebox">
-        <div class="middlesubbox">
-          <div class="squarebox"><img class="squareimg" src="img/icon03.png"></div>
-          <div class="squarebox"><img src="img/text.02.png"><div class="titlebox2">&nbsp;</div></div>
-    </div>
-    <div class="videobox">
-      <iframe id="ytplayer" type="text/html" width="640" height="360"
-              src="http://www.youtube.com/embed/<%= @response.dig(:video, :id) %>?autoplay=1"
-              frameborder="0"></iframe>
-    </div>
-    <div class="middlebox">
-        <div class="middlesubbox">
-          <div class="squarebox"><img class="squareimg" src="img/icon02.png"><div class="titlebox3">&nbsp;</div></div>
-          <div class="squarebox"></div>
-    </div>
-    </div>
-    <div class="colbox">
-      <div class="squarebox"></div>
+  </div>
+  <div class="colbox">
+    <% @events.each do |event| %>
       <div class="squarebox eventbox">
         <div class="eventbox_info">
-        <div class="event_title"><%= @response[:eventPages].first[:description] %></div>
-        <div class="event_place"><i class="fa fa-map-marker"></i><%= @response[:eventPages].first[:place] %></div>
-        <div class="event_date"><i class="fa fa-calendar-o"></i><%= @response[:eventPages].first[:startedAt] %></div>
+          <div class="event_title"><%= event.title %></div>
+          <div class="event_place"><i class="fa fa-map-marker"></i>&nbsp;<%= event.place %><%= event.address %></div>
+          <div class="event_date"><i class="fa fa-calendar-o"></i>&nbsp;<%= event.started_at.strftime("%Y/%m/%d(#{%w(日 月 火 水 木 金 土)[event.started_at.wday]})%H:%M") %> 〜 <%=
+            if event.ended_at.blank?
+              ""
+            elsif event.ended_at.day == event.started_at
+              event.ended_at.strftime("%H:%M")
+            else
+              event.ended_at.strftime("%Y/%m/%d(#{%w(日 月 火 水 木 金 土)[event.started_at.wday]})%H:%M")
+            end
+          %></div>
         </div>
       </div>
-      <div class="squarebox"></div>
-      <div class="squarebox"></div>
-    </div>
+    <% end %>
+  </div>
 </div>

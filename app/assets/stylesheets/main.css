@@ -28,7 +28,7 @@ body{
   margin: 0;
   border: 0;
   background-color: #000;
-  background-image: url(../img/top-main.png);
+  background-image: url(/assets/top-main.png);
 }
 .middlesubbox{
   float: left;
@@ -83,7 +83,7 @@ body{
   border-left: 2px solid #333;
 }
 .eventbox{
-  background-image: url(../img/dummy.png);
+  background-image: url(/assets/dummy.png);
   background-size: cover;
 }
 .eventbox_info{
