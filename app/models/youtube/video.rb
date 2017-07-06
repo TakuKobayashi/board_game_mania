@@ -24,6 +24,10 @@
 #
 
 class Youtube::Video < ApplicationRecord
+  has_many :relateds, class_name: 'Youtube::VideoRelated', foreign_key: :youtube_video_id
+  has_many :related_videos, through: :relateds, source: :to_video
+  has_many :tags, class_name: 'Youtube::VideoTag', foreign_key: :youtube_video_id
+
   def embed_url
     return "https://www.youtube.com/embed/" + self.video_id + "?autoplay=1"
   end
