@@ -24,7 +24,11 @@
 #
 
 class Youtube::Video < ApplicationRecord
-    def self.import_video!(youtube_video)
+  def embed_url
+    return "https://www.youtube.com/embed/" + self.video_id + "?autoplay=1"
+  end
+
+  def self.import_video!(youtube_video)
     videos = []
     id_and_tags = {}
     youtube_video.items.each do |item|

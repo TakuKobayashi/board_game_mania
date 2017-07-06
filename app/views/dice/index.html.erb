@@ -11,7 +11,9 @@
       <div class="squarebox"><%= image_tag("text02.png", class: "text02") %><div class="titlebox2">&nbsp;</div></div>
     </div>ß
   </div>
-  <div class="videobox"></div>
+  <div class="videobox">
+    <iframe type="text/html" width="640" height="360" src="<%= @video.embed_url %>" frameborder="0"></iframe>
+  </div>
   <div class="middlebox">
     <div class="middlesubbox">
       <div class="squarebox"><div class="titlebox3">&nbsp;</div><%= image_tag("text03.png", class: "text03") %></div>
