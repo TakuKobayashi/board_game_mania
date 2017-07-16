@@ -10,7 +10,7 @@ body{
   background-color: #333;
 }
 .colbox {
-    display: flex;
+  display: flex;
   width: 1280px;
   height: 180px;
   flex-direction:row;
@@ -74,7 +74,7 @@ body{
 }
 .titlebox3{
   position: absolute;
-    bottom: 0;
+  bottom: 0;
   width: 40px;
   height: 172px;
   color: #FFF;
