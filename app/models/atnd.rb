@@ -30,7 +30,7 @@
 #
 
 class Atnd < Event
-  ATND_API_URL = "http://api.atnd.org/events/"
+  ATND_API_URL = "https://api.atnd.org/events/"
   ATND_EVENTPAGE_URL = "https://atnd.org/events/"
 
   def self.find_event(keywords:, start: 1)
