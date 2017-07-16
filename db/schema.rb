@@ -63,6 +63,7 @@ ActiveRecord::Schema.define(version: 20170409002943) do
     t.integer "like_count", default: 0, null: false
     t.integer "favorite_count", default: 0, null: false
     t.bigint "view_count", default: 0, null: false
+    t.boolean "is_related", default: false, null: false
     t.index ["published_at"], name: "index_youtube_videos_on_published_at"
     t.index ["video_id"], name: "index_youtube_videos_on_video_id", unique: true
     t.index ["youtube_channel_id"], name: "index_youtube_videos_on_youtube_channel_id"

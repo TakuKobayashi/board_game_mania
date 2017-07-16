@@ -13,6 +13,7 @@ class CreateYoutubeVideos < ActiveRecord::Migration[5.0]
       t.integer :like_count, null: false, default: 0
       t.integer :favorite_count, null: false, default: 0
       t.integer :view_count, null: false, default: 0, limit: 8
+      t.boolean :is_related, null: false, default: false
     end
 
     add_index :youtube_videos, :youtube_channel_id

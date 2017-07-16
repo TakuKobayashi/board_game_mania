@@ -15,6 +15,7 @@
 #  like_count          :integer          default(0), not null
 #  favorite_count      :integer          default(0), not null
 #  view_count          :integer          default(0), not null
+#  is_related          :boolean          default(FALSE), not null
 #
 # Indexes
 #
@@ -32,7 +33,7 @@ class Youtube::Video < ApplicationRecord
     return "https://www.youtube.com/embed/" + self.video_id + "?autoplay=1"
   end
 
-  def self.import_video!(youtube_video)
+  def self.import_video!(youtube_video:, is_related: false)
     videos = []
     id_and_tags = {}
     youtube_video.items.each do |item|
@@ -46,7 +47,8 @@ class Youtube::Video < ApplicationRecord
         dislike_count: item.statistics.try(:dislike_count).to_i,
         like_count: item.statistics.try(:like_count).to_i,
         favorite_count: item.statistics.try(:favorite_count).to_i,
-        view_count: item.statistics.try(:view_count).to_i
+        view_count: item.statistics.try(:view_count).to_i,
+        is_related: is_related
       )
       id_and_tags[item.id] = item.snippet.tags
       videos << video
@@ -80,8 +82,8 @@ class Youtube::Video < ApplicationRecord
     Youtube::VideoTag.import(tags, on_duplicate_key_update: [:youtube_video_id, :tag])
   end
 
-  def import_related_video!(youtube_video)
-    Youtube::Video.import_video!(youtube_video)
+  def import_related_video!(youtube_video:)
+    Youtube::Video.import_video!(youtube_video: youtube_video, is_related: true)
     video_ids = Youtube::Video.where(video_id: youtube_video.items.map(&:id)).pluck(:id)
     relateds = video_ids.map do |to_id|
       Youtube::VideoRelated.new(youtube_video_id: self.id, to_youtube_video_id: to_id)
