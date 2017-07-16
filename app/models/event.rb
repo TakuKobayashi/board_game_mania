@@ -39,7 +39,7 @@ class Event < ApplicationRecord
     self.address = Charwidth.normalize(self.address)
   end
 
-  BOARDGAME_KEYWORDS = ["boardgame", "ボードゲーム", "アナログゲーム", "analoggame"]
+  BOARDGAME_KEYWORDS = ["ボードゲーム", "ぼーどげーむ", "boardgame", "アナログゲーム", "あなろぐげーむ", "analoggame"]
 
   def boardgame_event?
     sanitized_title = ApplicationRecord.basic_sanitize(self.title).downcase
