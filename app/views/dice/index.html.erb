@@ -22,12 +22,12 @@
     <% @events.each do |event| %>
       <div class="squarebox eventbox">
         <div class="eventbox_info">
-          <div class="event_title"><%= event.title %></div>
+          <div class="event_title"><%= link_to(event.title, event.url.to_s) %></div>
           <div class="event_place"><i class="fa fa-map-marker"></i>&nbsp;<%= event.place %><%= event.address %></div>
           <div class="event_date"><i class="fa fa-calendar-o"></i>&nbsp;<%= event.started_at.strftime("%Y/%m/%d(#{%w(日 月 火 水 木 金 土)[event.started_at.wday]})%H:%M") %> 〜 <%=
             if event.ended_at.blank?
               ""
-            elsif event.ended_at.day == event.started_at
+            elsif event.ended_at.day == event.started_at.day
               event.ended_at.strftime("%H:%M")
             else
               event.ended_at.strftime("%Y/%m/%d(#{%w(日 月 火 水 木 金 土)[event.started_at.wday]})%H:%M")

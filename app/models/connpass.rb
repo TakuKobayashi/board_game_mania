@@ -39,6 +39,7 @@ class Connpass < Event
   end
 
   def self.import_events!
+    start = 1
     update_columns = Connpass.column_names - ["id", "type", "shortener_url", "event_id", "created_at"]
     begin
       events_response = Connpass.find_event(keywords: Event::BOARDGAME_KEYWORDS + ["BoardGame", "AnalogGame"], start: start)

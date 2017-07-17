@@ -31,7 +31,7 @@ namespace :crawl do
     end
   end
 
-  task event_crawl: :environment do
+  task event: :environment do
     Event.import_events!
   end
 end
