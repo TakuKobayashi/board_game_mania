@@ -1,6 +1,7 @@
 #!/bin/sh
 
 git pull
+bundle install
 RAILS_ENV=production rails db:migrate
 RAILS_ENV=production bundle exec rake assets:precompile
 whenever --update-crontab
