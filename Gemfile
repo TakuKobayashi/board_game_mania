@@ -52,6 +52,7 @@ gem 'addressable'
 gem 'rails-i18n', '~> 5.0.0'
 
 gem 'geocoder'
+gem 'whenever', :require => false
 
 
 group :development, :test do
