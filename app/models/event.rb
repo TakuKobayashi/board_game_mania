@@ -70,13 +70,22 @@ class Event < ApplicationRecord
   end
 
   def generate_tweet_text
-     tweet_words = [self.title, self.short_url, self.started_at.strftime("%Y年%m月%d日")]
-     tweet_words += ["#ボードゲーム", "#アナログゲーム", "#boardgame", "#analoggame", "#boardgames", "#analoggames"]
-     text_size = 0
-     tweet_words.select! do |text|
-       text_size += text.size + 1
-       text_size <= 140
-     end
-     return tweet_words.join("\n")
+    tweet_words = [self.title, self.short_url, self.started_at.strftime("%Y年%m月%d日")]
+    datetime_range = self.started_at.strftime("%Y/%m/%d(#{%w(日 月 火 水 木 金 土)[self..started_at.wday]})%H:%M")
+    if self.ended_at.blank?
+      datetime_range = datetime_range + "〜"
+    elsif self.ended_at.day == self.started_at.day
+      datetime_range = datetime_range + "〜" + self.ended_at.strftime("%H:%M")
+    else
+      datetime_range = datetime_range + "〜" + self.ended_at.strftime("%Y/%m/%d(#{%w(日 月 火 水 木 金 土)[self.started_at.wday]})%H:%M")
+    end
+    tweet_words << datetime_range
+    tweet_words += ["#ボードゲーム", "#アナログゲーム", "#boardgame", "#analoggame", "#boardgames", "#analoggames"]
+    text_size = 0
+    tweet_words.select! do |text|
+      text_size += text.size + 1
+      text_size <= 140
+    end
+    return tweet_words.join("\n")
   end
 end
