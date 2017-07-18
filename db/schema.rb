@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170409002943) do
+ActiveRecord::Schema.define(version: 20170718015852) do
 
   create_table "events", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "event_id"
@@ -34,6 +34,18 @@ ActiveRecord::Schema.define(version: 20170409002943) do
     t.index ["event_id", "type"], name: "index_events_on_event_id_and_type", unique: true
     t.index ["started_at", "ended_at"], name: "index_events_on_started_at_and_ended_at"
     t.index ["title"], name: "index_events_on_title"
+  end
+
+  create_table "twitter_bots", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "tweet", null: false
+    t.string "tweet_id", null: false
+    t.string "from_type"
+    t.integer "from_id"
+    t.datetime "tweet_time", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["from_type", "from_id"], name: "index_twitter_bots_on_from_type_and_from_id"
+    t.index ["tweet_id"], name: "index_twitter_bots_on_tweet_id"
   end
 
   create_table "youtube_video_relateds", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|

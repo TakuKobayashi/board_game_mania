@@ -68,4 +68,15 @@ class Event < ApplicationRecord
     result = service.insert_url(url_obj)
     update!(shortener_url: result.id)
   end
+
+  def generate_tweet_text
+     tweet_words = [self.title, self.short_url, self.started_at.strftime("%Y年%m月%d日")]
+     tweet_words += ["#ボードゲーム", "#アナログゲーム", "#boardgame", "#analoggame", "#boardgames", "#analoggames"]
+     text_size = 0
+     tweet_words.select! do |text|
+       text_size += text.size
+       text_size <= 140
+     end
+     return tweet_words.join("\n")
+  end
 end
