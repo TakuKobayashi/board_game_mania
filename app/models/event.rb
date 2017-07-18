@@ -71,7 +71,7 @@ class Event < ApplicationRecord
 
   def generate_tweet_text
     tweet_words = [self.title, self.short_url, self.started_at.strftime("%Y年%m月%d日")]
-    datetime_range = self.started_at.strftime("%Y/%m/%d(#{%w(日 月 火 水 木 金 土)[self..started_at.wday]})%H:%M")
+    datetime_range = self.started_at.strftime("%Y/%m/%d(#{%w(日 月 火 水 木 金 土)[self.started_at.wday]})%H:%M")
     if self.ended_at.blank?
       datetime_range = datetime_range + "〜"
     elsif self.ended_at.day == self.started_at.day
