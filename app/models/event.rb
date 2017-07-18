@@ -74,7 +74,7 @@ class Event < ApplicationRecord
      tweet_words += ["#ボードゲーム", "#アナログゲーム", "#boardgame", "#analoggame", "#boardgames", "#analoggames"]
      text_size = 0
      tweet_words.select! do |text|
-       text_size += text.size
+       text_size += text.size + 1
        text_size <= 140
      end
      return tweet_words.join("\n")
