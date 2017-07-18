@@ -25,6 +25,10 @@ every :day, at: '10:00' do
   rake "crawl:event"
 end
 
+every :day, at: '12:00' do
+  rake "batch:bot_tweet"
+end
+
 every :day, at: '19:00' do
   rake "crawl:youtube"
 end
