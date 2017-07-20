@@ -6,4 +6,5 @@ class GithubController < ApplicationController
     logger.info param
     head(:ok)
   end
+
 end
