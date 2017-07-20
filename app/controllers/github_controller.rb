@@ -10,4 +10,5 @@ class GithubController < ApplicationController
     end
     head(:ok)
   end
+
 end
