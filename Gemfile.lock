@@ -1,3 +1,12 @@
+GIT
+  remote: https://github.com/seuros/capistrano-puma.git
+  revision: bcb4887c39559a803db174ee30ccf8ca991bc180
+  specs:
+    capistrano3-puma (3.1.1)
+      capistrano (~> 3.7)
+      capistrano-bundler
+      puma (~> 3.4)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -66,10 +75,6 @@ GEM
     capistrano-rvm (0.1.2)
       capistrano (~> 3.0)
       sshkit (~> 1.2)
-    capistrano3-puma (3.1.1)
-      capistrano (~> 3.7)
-      capistrano-bundler
-      puma (~> 3.4)
     capybara (2.14.4)
       addressable
       mime-types (>= 1.16)
@@ -314,13 +319,14 @@ PLATFORMS
 DEPENDENCIES
   activerecord-import
   addressable
+  airbrussh
   annotate
   byebug
   capistrano
   capistrano-bundler
   capistrano-rails
   capistrano-rvm
-  capistrano3-puma
+  capistrano3-puma!
   capybara (~> 2.13)
   charwidth
   coffee-rails (~> 4.2)
