@@ -12,12 +12,11 @@ role :root, %w{root@tk2-219-19169.vs.sakura.ne.jp}
 set :password, ask('Server password', nil)
 
 # RVM Config
-set :scm, :git
 set :rvm_type, :system
 set :rvm_ruby_version, "2.4.1@board_game_mania"
 
 set :branch, ENV['BRANCH'] || ENV['branch'] || "master"
-set :linked_files, [".env", "config/database.yml"]
+set :linked_files, ["config/database.yml"]
 
 # role-based syntax
 # ==================
