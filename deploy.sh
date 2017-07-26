@@ -4,7 +4,7 @@ git pull
 bundle install
 RAILS_ENV=production rails db:migrate
 RAILS_ENV=production rails assets:clean
-RAILS_ENV=production rails assets:precompile
+RAILS_ENV=production rails assets:precompile --trace
 whenever --update-crontab
 spring stop
 kill -9 `cat tmp/pids/server.pid`
