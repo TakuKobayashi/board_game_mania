@@ -39,7 +39,7 @@ class Event < ApplicationRecord
     self.address = Charwidth.normalize(self.address)
   end
 
-  BOARDGAME_KEYWORDS = ["ボードゲーム", "ぼーどげーむ", "boardgame", "アナログゲーム", "あなろぐげーむ", "analoggame"]
+  BOARDGAME_KEYWORDS = ["ボドゲ", "ボードゲーム", "ぼーどげーむ", "boardgame", "アナログゲーム", "あなろぐげーむ", "analoggame"]
 
   def boardgame_event?
     sanitized_title = ApplicationRecord.basic_sanitize(self.title).downcase
@@ -80,7 +80,7 @@ class Event < ApplicationRecord
       datetime_range = datetime_range + "〜" + self.ended_at.strftime("%Y/%m/%d(#{%w(日 月 火 水 木 金 土)[self.started_at.wday]})%H:%M")
     end
     tweet_words << datetime_range
-    tweet_words += ["#ボードゲーム", "#アナログゲーム", "#boardgame", "#analoggame", "#boardgames", "#analoggames"]
+    tweet_words += ["#ボドゲ", "#ボードゲーム", "#アナログゲーム", "#boardgame", "#analoggame", "#boardgames", "#analoggames"]
     text_size = 0
     tweet_words.select! do |text|
       text_size += text.size + 2
