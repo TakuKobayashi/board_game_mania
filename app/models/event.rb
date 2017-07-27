@@ -42,8 +42,24 @@ class Event < ApplicationRecord
   BOARDGAME_KEYWORDS = ["ボドゲ", "ボードゲーム", "ぼーどげーむ", "boardgame", "アナログゲーム", "あなろぐげーむ", "analoggame"]
 
   def boardgame_event?
-    sanitized_title = ApplicationRecord.basic_sanitize(self.title).downcase
-    return Event::BOARDGAME_KEYWORDS.any?{|word| sanitized_title.include?(word) }
+    return self.boardgame_event_confidence_score >= 1
+  end
+
+  def boardgame_event_confidence_score
+    sanitized_title = ApplicationRecord.basic_sanitize(self.title).downcase.tr('ぁ-ん','ァ-ン')
+    doc = Nokogiri::HTML.parse(self.description)
+    des = doc.text.to_s.downcase.tr('ぁ-ん','ァ-ン')
+    score = 0
+    keywords = BOARDGAME_KEYWORDS - ["ぼーどげーむ", "あなろぐげーむ"]
+    keywords.each do |word|
+      if sanitized_title.include?(word)
+        score += 1
+      end
+      if des.include?(word)
+        score += 1
+      end
+    end
+    return score
   end
 
   def self.import_events!
