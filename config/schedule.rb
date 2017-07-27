@@ -32,3 +32,7 @@ end
 every :day, at: '19:00' do
   rake "crawl:youtube"
 end
+
+every :day, at: '1:00' do
+  rake "crawl:youtube_rewlated_video"
+end
