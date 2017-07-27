@@ -53,7 +53,7 @@ gem 'rails-i18n', '~> 5.0.0'
 
 gem 'geocoder'
 gem 'whenever', :require => false
-gem 'twitter'
+gem 'twitter', '~> 6.1'
 gem "octokit", "~> 4.0"
 
 gem 'capistrano'
