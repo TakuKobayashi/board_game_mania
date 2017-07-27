@@ -73,13 +73,19 @@ class Youtube::Video < ApplicationRecord
             sanitize_split_tags = sanitized.split(" ")
           end
           results += sanitize_split_tags.map do |t|
-            Youtube::VideoTag.new(youtube_video_id: id, tag: t)
+            yvt = Youtube::VideoTag.new(youtube_video_id: id, tag: t)
+            yvt.sharp
+            yvt
           end
         end
         results
       end
     end.flatten.compact
     Youtube::VideoTag.import(tags, on_duplicate_key_update: [:youtube_video_id, :tag])
+  end
+
+  def sharp
+    self.tag = self.tag.downcase.tr('ぁ-ん','ァ-ン')
   end
 
   def import_related_video!(youtube_video:)
