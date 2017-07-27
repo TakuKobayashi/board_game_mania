@@ -39,7 +39,7 @@ class Event < ApplicationRecord
     self.address = Charwidth.normalize(self.address)
   end
 
-  BOARDGAME_KEYWORDS = ["ボドゲ", "ボードゲーム", "ぼーどげーむ", "boardgame", "アナログゲーム", "あなろぐげーむ", "analoggame"]
+  BOARDGAME_KEYWORDS = ["人狼", "ボドゲ", "ボードゲーム", "ぼーどげーむ", "boardgame", "アナログゲーム", "あなろぐげーむ", "analoggame"]
 
   def boardgame_event?
     return self.boardgame_event_confidence_score >= 1
