@@ -54,7 +54,8 @@ gem 'rails-i18n', '~> 5.0.0'
 gem 'geocoder'
 gem 'whenever', :require => false
 gem 'twitter', '~> 6.1'
-gem "octokit", "~> 4.0"
+gem "octokit", '~> 4.0'
+gem 'sitemap_generator'
 
 gem 'capistrano'
 gem 'capistrano-rails'
