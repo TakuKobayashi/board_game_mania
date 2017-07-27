@@ -14,4 +14,8 @@
 
 class Youtube::VideoTag < ApplicationRecord
   belongs_to :video, class_name: 'Youtube::Video', foreign_key: :youtube_video_id, required: false
+
+  def sharp
+    self.tag = self.tag.downcase.tr('ぁ-ん','ァ-ン')
+  end
 end

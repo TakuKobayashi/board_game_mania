@@ -84,10 +84,6 @@ class Youtube::Video < ApplicationRecord
     Youtube::VideoTag.import(tags, on_duplicate_key_update: [:youtube_video_id, :tag])
   end
 
-  def sharp
-    self.tag = self.tag.downcase.tr('ぁ-ん','ァ-ン')
-  end
-
   def import_related_video!(youtube_video:)
     Youtube::Video.import_video!(youtube_video: youtube_video, is_related: true)
     video_ids = Youtube::Video.where(video_id: youtube_video.items.map(&:id)).pluck(:id)
