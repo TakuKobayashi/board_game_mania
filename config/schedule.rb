@@ -21,7 +21,7 @@
 
 set :output, "#{path}/log/cron.log"
 
-every :day, at: '10:00' do
+every :day, at: '10:00 am' do
   rake "crawl:event"
 end
 
@@ -33,6 +33,10 @@ every :day, at: '19:00' do
   rake "crawl:youtube"
 end
 
-every :day, at: '1:00' do
+every :day, at: '1:00 am' do
   rake "crawl:youtube_rewlated_video"
+end
+
+every :day, at:'5:00 am' do
+  rake '-s sitemap:refresh'
 end
