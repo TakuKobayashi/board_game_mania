@@ -13,7 +13,9 @@ module Youtube
   end
 
   def self.loop_crawl(pagetoke_key)
-    page_token = ExtraInfo.read_extra_info[pagetoke_key]
+    extra_info = ExtraInfo.read_extra_info
+    return false if extra_info.has_key?(pagetoke_key) && extra_info[pagetoke_key].nil?
+    page_token = extra_info[pagetoke_key]
     begin
       next_page_token = yield(page_token)
       if next_page_token.blank?
@@ -23,5 +25,6 @@ module Youtube
       end
       ExtraInfo.update({pagetoke_key => next_page_token})
     end while page_token.present?
+    return true
   end
 end
