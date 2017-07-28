@@ -1,5 +1,5 @@
 # Set the host name for URL creation
-SitemapGenerator::Sitemap.default_host = "http://www.boardgame-mania.click/"
+SitemapGenerator::Sitemap.default_host = "https://www.boardgame-mania.click/"
 
 SitemapGenerator::Sitemap.create do
   # Put links creation logic here.
