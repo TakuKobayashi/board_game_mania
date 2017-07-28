@@ -1,2 +1,2 @@
 User-agent: *
-Sitemap: /sitemap.xml.gz
+Sitemap: https://www.boardgame-mania.click/sitemap.xml.gz
