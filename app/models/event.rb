@@ -56,7 +56,7 @@ class Event < ApplicationRecord
         score += 1
       end
       if des.include?(word)
-        score += 1
+        score += 0.5
       end
     end
     return score
