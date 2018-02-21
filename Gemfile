@@ -40,10 +40,8 @@ gem 'kaminari'
 gem 'activerecord-import'
 
 gem 'google-api-client', '~> 0.11'
-gem 'youtube-dl.rb'
 
 gem 'httpclient'
-
 gem 'charwidth'
 gem 'puma_worker_killer'
 
