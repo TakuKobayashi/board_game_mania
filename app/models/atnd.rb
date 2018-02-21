@@ -34,22 +34,18 @@ class Atnd < Event
   ATND_EVENTPAGE_URL = "https://atnd.org/events/"
 
   def self.find_event(keywords:, start: 1)
-    http_client = HTTPClient.new
-    response = http_client.get(ATND_API_URL, {keyword_or: keywords, count: 100, start: start, format: :json}, {})
-    return JSON.parse(response.body)
+    return RequestParser.request_and_parse_json(url: ATND_API_URL, params: {keyword_or: keywords, count: 100, start: start, format: :json})
   end
 
   def self.import_events!
-    results_available = 0
     start = 1
-    update_columns = Atnd.column_names - ["id", "type", "shortener_url", "event_id", "created_at"]
     begin
       events_response = Atnd.find_event(keywords: Event::BOARDGAME_KEYWORDS + ["BoardGame", "AnalogGame"], start: start)
       start += events_response["results_returned"]
-      atnd_events = []
       events_response["events"].each do |res|
         event = res["event"]
-        atnd_event = Atnd.new(
+        atnd_event = Atnd.find_or_initialize_by(event_id: event["event_id"].to_s)
+        atnd_event.attributes = atnd_event.attributes.merge({
           event_id: event["event_id"].to_s,
           title: event["title"].to_s,
           url: ATND_EVENTPAGE_URL + event["event_id"].to_s,
@@ -61,13 +57,12 @@ class Atnd < Event
           lon: event["lon"],
           owner_id: event["owner_id"],
           owner_nickname: event["owner_nickname"]
-        )
+        })
         atnd_event.started_at = DateTime.parse(event["started_at"])
         atnd_event.ended_at = DateTime.parse(event["ended_at"]) if event["ended_at"].present?
-        atnd_events << atnd_event
+        atnd_event.set_location_data
+        atnd_event.save!
       end
-
-      Atnd.import!(atnd_events, on_duplicate_key_update: update_columns)
-    end while atnd_events.present?
+    end while events_response["events"].present?
   end
 end

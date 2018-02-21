@@ -66,6 +66,7 @@ class Event < ApplicationRecord
     Connpass.import_events!
     Doorkeeper.import_events!
     Atnd.import_events!
+    Peatix.import_events!
   end
 
   def short_url
@@ -73,6 +74,31 @@ class Event < ApplicationRecord
       convert_to_short_url!
     end
     return self.shortener_url
+  end
+
+  def set_location_data
+    apiconfig = YAML.load(File.open(Rails.root.to_s + "/config/apiconfig.yml"))
+    if self.address.present? && self.lat.blank? && self.lon.blank?
+      geo_result = RequestParser.request_and_parse_json(
+        url: "https://maps.googleapis.com/maps/api/geocode/json",
+        params: {address: self.address, language: "ja", key: apiconfig["google_api"]["key"]}
+        )["results"].first
+      if geo_result.present?
+        self.lat = geo_result["geometry"]["location"]["lat"]
+        self.lon = geo_result["geometry"]["location"]["lng"]
+      end
+    elsif self.address.blank? && self.lat.present? && self.lon.present?
+      geo_result = RequestParser.request_and_parse_json(
+        url: "https://maps.googleapis.com/maps/api/geocode/json",
+        params: {latlng: [self.lat, self.lon].join(","), language: "ja", key: apiconfig["google_api"]["key"]}
+        )["results"].first
+      if geo_result.present?
+        self.address = Sanitizer.scan_japan_address(geo_result["formatted_address"])
+      end
+    end
+    if self.address.present?
+      self.address = Charwidth.normalize(self.address)
+    end
   end
 
   def convert_to_short_url!

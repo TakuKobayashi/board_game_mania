@@ -33,22 +33,20 @@ class Connpass < Event
   CONNPASS_URL = "https://connpass.com/api/v1/event/"
 
   def self.find_event(keywords:, start: 1)
-    http_client = HTTPClient.new
-    response = http_client.get(CONNPASS_URL, {keyword_or: keywords, count: 100, start: start, order: 1}, {})
-    return JSON.parse(response.body)
+    return RequestParser.request_and_parse_json(url: CONNPASS_URL, params: {keyword_or: keywords, count: 100, start: start, order: 1})
   end
 
   def self.import_events!
     start = 1
-    update_columns = Connpass.column_names - ["id", "type", "shortener_url", "event_id", "created_at"]
+    results_available = 0
     begin
       events_response = Connpass.find_event(keywords: Event::BOARDGAME_KEYWORDS + ["BoardGame", "AnalogGame"], start: start)
       results_available = events_response["results_available"]
       start += events_response["results_returned"]
       connpass_events = []
       events_response["events"].each do |res|
-        connpass_event = Connpass.new(
-          event_id: res["event_id"].to_s,
+        connpass_event = Connpass.find_or_initialize_by(event_id: res["event_id"].to_s)
+        connpass_event.attributes = connpass_event.attributes.merge({
           title: res["title"].to_s,
           url: res["event_url"].to_s,
           description: ApplicationRecord.basic_sanitize(res["description"].to_s),
@@ -60,13 +58,12 @@ class Connpass < Event
           owner_id: res["owner_id"],
           owner_nickname: res["owner_nickname"],
           owner_name: res["owner_display_name"]
-        )
+        })
         connpass_event.started_at = DateTime.parse(res["started_at"])
         connpass_event.ended_at = DateTime.parse(res["ended_at"]) if res["ended_at"].present?
-        connpass_events << connpass_event
+        connpass_event.set_location_data
+        connpass_event.save!
       end
-
-      Connpass.import!(connpass_events, on_duplicate_key_update: update_columns)
     end while start < results_available
   end
 end
