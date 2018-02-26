@@ -7,7 +7,7 @@ set :branch, fetch(:stage)
 set :deploy_to, "/app/project/board_game_mania"
 set :keep_releases, 3
 
-set :linked_files, ["config/database.yml", "config/apiconfig.yml"]
+set :linked_files, ["config/database.yml", ".env"]
 set :linked_dirs, ["bin", "log", "tmp/pids", "tmp/sockets", "tmp/private", "public", "vendor/bundle"]
 
 # Rails config

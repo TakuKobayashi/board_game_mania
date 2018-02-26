@@ -1,7 +1,6 @@
 namespace :github do
   task register_hook: :environment do
-    apiconfig = YAML.load(File.open(Rails.root.to_s + "/config/apiconfig.yml"))
-    client = Octokit::Client.new(:login => apiconfig["github"]["login"], :password => apiconfig["github"]["password"])
+    client = Octokit::Client.new(:login => ENV.fetch("GITHUB_LOGIN_ACCOUNT_NAME", ""), :password => ENV.fetch("GITHUB_LOGIN_PASSWORD", ""))
     res = client.create_hook(
       'TakuKobayashi/board_game_mania',
       'board_game_mania',

@@ -61,6 +61,7 @@ gem 'capistrano-rvm'
 gem 'capistrano-bundler'
 gem 'capistrano3-puma', github: "seuros/capistrano-puma"
 gem 'airbrussh', require: false
+gem 'dotenv-rails', require: 'dotenv/rails-now'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

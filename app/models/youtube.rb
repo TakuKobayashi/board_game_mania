@@ -6,9 +6,8 @@ module Youtube
   end
 
   def self.get_api
-    apiconfig = YAML.load(File.open(Rails.root.to_s + "/config/apiconfig.yml"))
     youtube_api = Google::Apis::YoutubeV3::YouTubeService.new
-    youtube_api.key = apiconfig["google_api"]["key"]
+    youtube_api.key = ENV.fetch("GOOGLE_API_KEY", "")
     return youtube_api
   end
 

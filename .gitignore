@@ -4,34 +4,33 @@
 # or operating system, you probably want to add a global ignore instead:
 #   git config --global core.excludesfile '~/.gitignore_global'
 
-# Ignore all logfiles and tempfiles.
-/log/*
-/tmp/*
-!/log/.keep
-!/tmp/.keep
-
-# Ignore Byebug command history file.
-.byebug_history
+log/*.log
+tmp
+.settings/
+coverage
+*.DS_Store
+db/schema.rb
+.env
 
 .ruby-gemset
 .ruby-version
-rails/.redcar/
+.redcar/
 Thumbs.db
 *~
 .project
 .rvmrc
 .rbenv-version
-
 vendor/bundle/
 .bundle/config
-config/apiconfig.yml
-config/database.yml
+public/system/
+public/assets/
+public/sitemap*
+
+!server/log/.keep
+!server/tmp/.keep
+
+.byebug_history
 
 # emacs
 \#*\#
 .\#*
-
-.settings/
-
-# OSX
-.DS_Store
