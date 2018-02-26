@@ -37,9 +37,17 @@ class Event < ApplicationRecord
   end
 
   BOARDGAME_KEYWORDS = ["人狼", "ボドゲ", "ボードゲーム", "ぼーどげーむ", "boardgame", "アナログゲーム", "あなろぐげーむ", "analoggame"]
+  BOARDGAME_CHECK_SEARCH_KEYWORD_POINTS = {
+    "人狼" => 3,
+    "ボドゲ" => 3,
+    "ボードゲーム" => 3,
+    "boardgame" => 3,
+    "analoggame" => 3,
+    "ゲーム" => 2
+  }
 
   def boardgame_event?
-    return self.boardgame_event_confidence_score >= 1
+    return self.boardgame_event_confidence_score >= 9
   end
 
   def merge_attributes_and_set_location_data(attrs: {})
@@ -59,13 +67,12 @@ class Event < ApplicationRecord
     doc = Nokogiri::HTML.parse(self.description)
     des = doc.text.to_s.downcase.tr('ぁ-ん','ァ-ン')
     score = 0
-    keywords = BOARDGAME_KEYWORDS - ["ぼーどげーむ", "あなろぐげーむ"]
-    keywords.each do |word|
+    BOARDGAME_CHECK_SEARCH_KEYWORD_POINTS.each do |word, point|
       if sanitized_title.include?(word)
-        score += 1
+        score += (point * 3)
       end
       if des.include?(word)
-        score += 0.5
+        score += point
       end
     end
     return score
