@@ -108,7 +108,7 @@ class Event < ApplicationRecord
         params: {latlng: [self.lat, self.lon].join(","), language: "ja", key: ENV.fetch("GOOGLE_API_KEY", "")}
         )["results"].first
       if geo_result.present?
-        self.address = Sanitizer.scan_japan_address(geo_result["formatted_address"])
+        self.address = Sanitizer.scan_japan_address(geo_result["formatted_address"]).join.strip
       end
     end
     if self.address.present?
