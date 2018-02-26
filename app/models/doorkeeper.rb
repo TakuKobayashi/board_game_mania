@@ -40,6 +40,7 @@ class Doorkeeper < Event
     page = 1
     begin
       events_response = Doorkeeper.find_event(keywords: Event::BOARDGAME_KEYWORDS + ["BoardGame", "AnalogGame"], page: page)
+      current_events = Doorkeeper.where(event_id: events_response.map{|res| res["event"]["id"]}.compact).index_by(&:event_id)
       transaction do
         events_response.each do |res|
           event = res["event"]
