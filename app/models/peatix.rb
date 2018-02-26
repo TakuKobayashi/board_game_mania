@@ -45,7 +45,7 @@ class Peatix < Event
       events_response = Peatix.find_event(keywords: Event::BOARDGAME_KEYWORDS + ["BoardGame", "AnalogGame"], page: page)
       json_data = events_response["json_data"]
       page += 1
-      current_events = Peatix.where(event_id: json_data["events"].map{|res| res["id"]}.compact).index_by(&:event_id))
+      current_events = Peatix.where(event_id: json_data["events"].map{|res| res["id"]}.compact).index_by(&:event_id)
       transaction do
         json_data["events"].each do |res|
           tracking_url = Addressable::URI.parse(res["tracking_url"])
