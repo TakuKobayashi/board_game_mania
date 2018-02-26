@@ -32,9 +32,6 @@
 require 'google/apis/urlshortener_v1'
 
 class Event < ApplicationRecord
-  geocoded_by :address, latitude: :lat, longitude: :lon
-  after_validation :geocode
-
   before_save do
     self.address = Charwidth.normalize(self.address)
   end
