@@ -40,24 +40,29 @@ class Doorkeeper < Event
     page = 1
     begin
       events_response = Doorkeeper.find_event(keywords: Event::BOARDGAME_KEYWORDS + ["BoardGame", "AnalogGame"], page: page)
-      events_response.each do |res|
-        event = res["event"]
-        doorkeeper_event = Doorkeeper.find_or_initialize_by(event_id: event["id"].to_s)
-        doorkeeper_event.attributes = doorkeeper_event.attributes.merge({
-          title: event["title"].to_s,
-          url: event["public_url"].to_s,
-          description: ApplicationRecord.basic_sanitize(event["description"].to_s),
-          limit_number: event["ticket_limit"],
-          address: event["address"].to_s,
-          place: event["venue_name"].to_s,
-          lat: event["lat"],
-          lon: event["long"],
-          owner_id: event["group"]
-        })
-        doorkeeper_event.started_at = DateTime.parse(event["starts_at"])
-        doorkeeper_event.ended_at = DateTime.parse(event["ends_at"]) if event["ends_at"].present?
-        doorkeeper_event.set_location_data
-        doorkeeper_event.save!
+      transaction do
+        events_response.each do |res|
+          event = res["event"]
+          if current_events[event["id"].to_s].present?
+            doorkeeper_event = current_events[event["id"].to_s]
+          else
+            doorkeeper_event = Doorkeeper.new(event_id: event["id"].to_s)
+          end
+          doorkeeper_event.merge_attributes_and_set_location_data(attrs: {
+            title: event["title"].to_s,
+            url: event["public_url"].to_s,
+            description: Sanitizer.basic_sanitize(event["description"].to_s),
+            limit_number: event["ticket_limit"],
+            address: event["address"].to_s,
+            place: event["venue_name"].to_s,
+            lat: event["lat"],
+            lon: event["long"],
+            owner_id: event["group"],
+            started_at: event["starts_at"],
+            ended_at: event["ends_at"]
+          })
+          doorkeeper_event.save!
+        end
       end
       page += 1
     end while events_response.present?

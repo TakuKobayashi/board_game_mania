@@ -39,8 +39,8 @@ class Youtube::Video < ApplicationRecord
     youtube_video.items.each do |item|
       video = Youtube::Video.new(
         video_id: item.id,
-        title: Youtube::Video.basic_sanitize(item.snippet.title),
-        description: Youtube::Video.basic_sanitize(item.snippet.description),
+        title: Sanitizer.basic_sanitize(item.snippet.title),
+        description: Sanitizer.basic_sanitize(item.snippet.description),
         published_at: item.snippet.published_at,
         thumnail_image_url: item.snippet.thumbnails.default.url,
         comment_count: item.statistics.try(:comment_count).to_i,
@@ -66,7 +66,7 @@ class Youtube::Video < ApplicationRecord
       else
         results = []
         video_id_and_tags[video_id].each do |tag|
-          sanitized = Youtube::Video.basic_sanitize(tag)
+          sanitized = Sanitizer.basic_sanitize(tag)
           next if sanitized.blank?
           sanitize_split_tags = [sanitized]
           if sanitized.length > 255

@@ -42,8 +42,20 @@ class Event < ApplicationRecord
     return self.boardgame_event_confidence_score >= 1
   end
 
+  def merge_attributes_and_set_location_data(attrs: {})
+    ops = OpenStruct.new(attrs.reject{|key, value| value.nil? })
+    if ops.started_at.present?
+      ops.started_at = DateTime.parse(ops.started_at)
+    end
+    if ops.ended_at.present?
+      ops.ended_at = DateTime.parse(ops.ended_at)
+    end
+    self.attributes = self.attributes.merge(ops.to_h)
+    self.set_location_data
+  end
+
   def boardgame_event_confidence_score
-    sanitized_title = ApplicationRecord.basic_sanitize(self.title).downcase.tr('ぁ-ん','ァ-ン')
+    sanitized_title = Sanitizer.basic_sanitize(self.title).downcase.tr('ぁ-ん','ァ-ン')
     doc = Nokogiri::HTML.parse(self.description)
     des = doc.text.to_s.downcase.tr('ぁ-ん','ァ-ン')
     score = 0

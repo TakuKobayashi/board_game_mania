@@ -44,25 +44,31 @@ class Connpass < Event
       results_available = events_response["results_available"]
       start += events_response["results_returned"]
       connpass_events = []
-      events_response["events"].each do |res|
-        connpass_event = Connpass.find_or_initialize_by(event_id: res["event_id"].to_s)
-        connpass_event.attributes = connpass_event.attributes.merge({
-          title: res["title"].to_s,
-          url: res["event_url"].to_s,
-          description: ApplicationRecord.basic_sanitize(res["description"].to_s),
-          limit_number: res["limit"],
-          address: res["address"].to_s,
-          place: res["place"].to_s,
-          lat: res["lat"],
-          lon: res["lon"],
-          owner_id: res["owner_id"],
-          owner_nickname: res["owner_nickname"],
-          owner_name: res["owner_display_name"]
-        })
-        connpass_event.started_at = DateTime.parse(res["started_at"])
-        connpass_event.ended_at = DateTime.parse(res["ended_at"]) if res["ended_at"].present?
-        connpass_event.set_location_data
-        connpass_event.save!
+      current_events = Connpass.where(event_id: events_response["events"].map{|res| res["event_id"]}.compact).index_by(&:event_id)
+      transaction do
+        events_response["events"].each do |res|
+          if current_events[res["event_id"].to_s].present?
+            connpass_event = current_events[res["event_id"].to_s]
+          else
+            connpass_event = Connpass.new(event_id: res["event_id"].to_s)
+          end
+          connpass_event.merge_attributes_and_set_location_data(attrs: {
+            title: res["title"].to_s,
+            url: res["event_url"].to_s,
+            description: Sanitizer.basic_sanitize(res["description"].to_s),
+            limit_number: res["limit"],
+            address: res["address"].to_s,
+            place: res["place"].to_s,
+            lat: res["lat"],
+            lon: res["lon"],
+            owner_id: res["owner_id"],
+            owner_nickname: res["owner_nickname"],
+            owner_name: res["owner_display_name"],
+            started_at: res["started_at"],
+            ended_at: res["ended_at"]
+          })
+          connpass_event.save!
+        end
       end
     end while start < results_available
   end
