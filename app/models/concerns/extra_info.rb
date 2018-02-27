@@ -20,7 +20,7 @@ module ExtraInfo
 
   def self.delete(*keyes)
     new_hash = read_extra_info
-    keyes.each do |key|
+    keyes.flatten.each do |key|
       new_hash.delete(key)
     end
   	File.open(EXTRA_INFO_FILE_PATH, "w"){
