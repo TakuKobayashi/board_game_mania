@@ -68,6 +68,7 @@ class Connpass < Event
             ended_at: res["ended_at"]
           })
           connpass_event.save!
+          sleep 1
         end
       end
     end while start < results_available
