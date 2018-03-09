@@ -54,6 +54,7 @@ gem 'whenever', :require => false
 gem 'twitter', '~> 6.1'
 gem "octokit", '~> 4.0'
 gem 'sitemap_generator'
+gem 'xml-simple'
 
 gem 'capistrano'
 gem 'capistrano-rails'
