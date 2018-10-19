@@ -28,22 +28,22 @@ if defined? :rbenv_root
   job_type :script,  %{cd :path && :environment_variable=:environment :rbenv_root/bin/rbenv exec bundle exec script/:task :output}
 end
 
-every :day, at: '10:00 am' do
+every :day, at: '1:00' do
   rake "crawl:event"
 end
 
-every :day, at: '12:00' do
+every :day, at: '3:00' do
   rake "batch:bot_tweet"
 end
 
-every :day, at: '19:00' do
+every :day, at: '10:00' do
   rake "crawl:youtube"
 end
 
-every :day, at: '1:00 am' do
+every :day, at: '16:00' do
   rake "crawl:youtube_related_video"
 end
 
-every :day, at:'5:00 am' do
+every :day, at:'20:00' do
   rake '-s sitemap:refresh'
 end
