@@ -74,8 +74,6 @@ GEM
     annotate (3.0.2)
       activerecord (>= 3.2, < 7.0)
       rake (>= 10.4, < 13.0)
-    archive-zip (0.12.0)
-      io-like (~> 0.3.0)
     bindex (0.8.1)
     bootsnap (1.4.5)
       msgpack (~> 1.0)
@@ -105,9 +103,6 @@ GEM
       xpath (~> 3.2)
     charwidth (0.1.5)
     childprocess (3.0.0)
-    chromedriver-helper (2.1.1)
-      archive-zip (~> 0.10)
-      nokogiri (~> 1.8)
     chronic (0.10.2)
     coffee-rails (4.2.2)
       coffee-script (>= 2.2.0)
@@ -164,7 +159,6 @@ GEM
     httpclient (2.8.3)
     i18n (1.7.0)
       concurrent-ruby (~> 1.0)
-    io-like (0.3.0)
     jbuilder (2.9.1)
       activesupport (>= 4.2.0)
     jquery-rails (4.3.5)
@@ -206,7 +200,6 @@ GEM
     msgpack (1.3.1)
     multi_json (1.14.1)
     multipart-post (2.1.1)
-    mysql2 (0.5.2)
     naught (1.1.0)
     net-scp (2.0.0)
       net-ssh (>= 2.6.5, < 6.0.0)
@@ -222,8 +215,6 @@ GEM
       get_process_mem (~> 0.2)
       puma (>= 2.7, < 5)
     rack (2.0.7)
-    rack-proxy (0.6.5)
-      rack
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
     rails (6.0.0)
@@ -300,6 +291,7 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
+    sqlite3 (1.4.1)
     sshkit (1.20.0)
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
@@ -323,8 +315,6 @@ GEM
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
     uber (0.1.0)
-    uglifier (4.2.0)
-      execjs (>= 0.3.0, < 3)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.6)
@@ -333,10 +323,10 @@ GEM
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
       railties (>= 6.0.0)
-    webpacker (4.0.7)
-      activesupport (>= 4.2)
-      rack-proxy (>= 0.6.1)
-      railties (>= 4.2)
+    webdrivers (4.1.3)
+      nokogiri (~> 1.6)
+      rubyzip (>= 1.3.0)
+      selenium-webdriver (>= 3.0, < 4.0)
     websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.4)
@@ -355,7 +345,7 @@ DEPENDENCIES
   addressable
   airbrussh
   annotate
-  bootsnap (>= 1.1.0)
+  bootsnap (>= 1.4.2)
   byebug
   capistrano
   capistrano-bundler
@@ -364,7 +354,6 @@ DEPENDENCIES
   capistrano3-puma!
   capybara (>= 2.15)
   charwidth
-  chromedriver-helper
   coffee-rails (~> 4.2)
   dotenv-rails
   geocoder
@@ -374,22 +363,21 @@ DEPENDENCIES
   jquery-rails
   kaminari
   listen (>= 3.0.5, < 3.2)
-  mysql2
   puma (~> 4.0)
   puma_worker_killer
   rails (~> 6.0)
   rails-i18n (~> 6.0.0)
-  sass-rails (~> 5.0)
+  sass-rails (~> 5)
   selenium-webdriver
   sitemap_generator
   spring
   spring-watcher-listen (~> 2.0.0)
+  sqlite3 (~> 1.4)
   turbolinks (~> 5)
   twitter (>= 6.0)
   tzinfo-data
-  uglifier (>= 1.3.0)
   web-console (>= 3.3.0)
-  webpacker
+  webdrivers
   whenever
   xml-simple
 
