@@ -29,8 +29,6 @@
 #  index_events_on_title                    (title)
 #
 
-require 'google/apis/urlshortener_v1'
-
 class Event < ApplicationRecord
   before_save do
     self.address = Charwidth.normalize(self.address)
