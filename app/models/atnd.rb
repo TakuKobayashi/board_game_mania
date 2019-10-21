@@ -43,31 +43,29 @@ class Atnd < Event
       events_response = Atnd.find_event(keywords: Event::BOARDGAME_KEYWORDS + ["BoardGame", "AnalogGame"], start: start)
       start += events_response["results_returned"]
       current_events = Atnd.where(event_id: events_response["events"].map{|res| res["event"]["event_id"]}.compact).index_by(&:event_id)
-      transaction do
-        events_response["events"].each do |res|
-          event = res["event"]
-          if current_events[event["event_id"].to_s].present?
-            atnd_event = current_events[event["event_id"].to_s]
-          else
-            atnd_event = Atnd.new(event_id: event["event_id"].to_s)
-          end
-          atnd_event.merge_attributes_and_set_location_data(attrs: {
-            event_id: event["event_id"].to_s,
-            title: event["title"].to_s,
-            url: ATND_EVENTPAGE_URL + event["event_id"].to_s,
-            description: Sanitizer.basic_sanitize(event["description"].to_s),
-            limit_number: event["limit"],
-            address: event["address"].to_s,
-            place: event["place"].to_s,
-            lat: event["lat"],
-            lon: event["lon"],
-            owner_id: event["owner_id"],
-            owner_nickname: event["owner_nickname"],
-            started_at: event["started_at"],
-            ended_at: event["ended_at"]
-          })
-          atnd_event.save!
+      events_response["events"].each do |res|
+        event = res["event"]
+        if current_events[event["event_id"].to_s].present?
+          atnd_event = current_events[event["event_id"].to_s]
+        else
+          atnd_event = Atnd.new(event_id: event["event_id"].to_s)
         end
+        atnd_event.merge_attributes_and_set_location_data(attrs: {
+          event_id: event["event_id"].to_s,
+          title: event["title"].to_s,
+          url: ATND_EVENTPAGE_URL + event["event_id"].to_s,
+          description: Sanitizer.basic_sanitize(event["description"].to_s),
+          limit_number: event["limit"],
+          address: event["address"].to_s,
+          place: event["place"].to_s,
+          lat: event["lat"],
+          lon: event["lon"],
+          owner_id: event["owner_id"],
+          owner_nickname: event["owner_nickname"],
+          started_at: event["started_at"],
+          ended_at: event["ended_at"]
+        })
+        atnd_event.save!
       end
     end while events_response["events"].present?
   end
