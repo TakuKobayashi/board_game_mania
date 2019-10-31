@@ -5,3 +5,17 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+sql_files = Dir.glob(Rails.root.join("db", "seeds", "**", "*.sql"))
+sql_files.each do |sql_file|
+  sql = File.open(sql_file) { |f| f.read }
+  # split multiple queries
+  queries = sql.split(/\n/)
+
+  ActiveRecord::Base.transaction do
+    queries.each do |q|
+      next if q.blank?
+      result = ActiveRecord::Base.connection.execute(q)
+    end
+  end
+end
