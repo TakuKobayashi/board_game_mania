@@ -31,6 +31,6 @@
 
 class Peatix < Event
   def self.import_events!
-    Peatix.import_events_from_keywords!(event_clazz: Peatix,keywords: Event::BOARDGAME_KEYWORDS + ["BoardGame", "AnalogGame"])
+    PeatixOperation.import_events_from_keywords!(event_clazz: Peatix,keywords: Event::BOARDGAME_KEYWORDS + ["BoardGame", "AnalogGame"])
   end
 end

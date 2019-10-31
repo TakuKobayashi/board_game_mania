@@ -45,14 +45,9 @@ module MeetupOperation
               place: vanue_hash['name'].to_s,
               lat: vanue_hash['lat'],
               lon: vanue_hash['lon'],
-              cost: fee_hash['amount'].to_i,
-              max_prize: 0,
-              currency_unit: fee_hash['currency'] || 'JPY',
               owner_id: group_hash['id'],
               owner_nickname: group_hash['urlname'],
               owner_name: Sanitizer.basic_sanitize(group_hash['name'].to_s),
-              attend_number: res['yes_rsvp_count'] || res['attendance_count'],
-              substitute_number: res['waitlist_count']
             }
           )
         meetup_event.save!

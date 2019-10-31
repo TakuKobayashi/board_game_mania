@@ -31,14 +31,9 @@ module ConnpassOperation
               place: res['place'].to_s,
               lat: res['lat'],
               lon: res['lon'],
-              cost: 0,
-              max_prize: 0,
-              currency_unit: 'JPY',
               owner_id: res['owner_id'],
               owner_nickname: res['owner_nickname'],
               owner_name: res['owner_display_name'],
-              attend_number: res['accepted'],
-              substitute_number: res['waiting'],
               started_at: res['started_at'],
               ended_at: res['ended_at']
             }

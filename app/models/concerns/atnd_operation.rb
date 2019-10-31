@@ -32,21 +32,13 @@ module AtndOperation
               place: event['place'].to_s,
               lat: event['lat'],
               lon: event['lon'],
-              cost: 0,
-              max_prize: 0,
-              currency_unit: 'JPY',
               owner_id: event['owner_id'],
               owner_nickname: event['owner_nickname'],
-              attend_number: event['accepted'],
-              substitute_number: event['waiting'],
               started_at: event['started_at'],
               ended_at: event['ended_at']
             }
           )
           atnd_event.save!
-          dom = RequestParser.request_and_parse_html(url: atnd_event.url, options: { follow_redirect: true })
-          hashtag_dom = dom.css('dl.clearfix').detect { |label| label.text.include?('ハッシュタグ') }
-          atnd_event.import_hashtags!(hashtag_strings: hashtag_dom.css('a').text.strip.split(/\s/)) if hashtag_dom.present?
         end
       end
     end while events_response['events'].present?

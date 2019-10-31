@@ -28,12 +28,7 @@ module DoorkeeperOperation
               place: event['venue_name'].to_s,
               lat: event['lat'],
               lon: event['long'],
-              cost: 0,
-              max_prize: 0,
-              currency_unit: 'JPY',
               owner_id: event['group'],
-              attend_number: event['participants'],
-              substitute_number: event['waitlisted'],
               started_at: event['starts_at'],
               ended_at: event['ends_at']
             }

@@ -38,9 +38,6 @@ module PeatixOperation
               place: res['venue_name'].to_s,
               lat: lat,
               lon: lng,
-              attend_number: -1,
-              max_prize: 0,
-              currency_unit: 'JPY',
               owner_id: res['organizer']['id'],
               owner_nickname: res['organizer']['name'],
               owner_name: res['organizer']['name'],
@@ -49,12 +46,6 @@ module PeatixOperation
           )
           dom = RequestParser.request_and_parse_html(url: peatix_event.url, options: { follow_redirect: true })
           peatix_event.description = Sanitizer.basic_sanitize(dom.css('#field-event-description').to_html)
-          price_dom = dom.css("meta[@itemprop = 'price']").min_by { |price_dom| price_dom['content'].to_i }
-          if price_dom.present?
-            peatix_event.cost = price_dom['content'].to_i
-          else
-            peatix_event.cost = 0
-          end
           peatix_event.save!
         end
         sleep 1
