@@ -40,3 +40,9 @@ public/sitemap*
 /yarn-error.log
 yarn-debug.log*
 .yarn-integrity
+
+.esm-cache
+.vscode
+node_modules
+build
+*.log

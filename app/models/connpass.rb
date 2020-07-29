@@ -30,49 +30,7 @@
 #
 
 class Connpass < Event
-  CONNPASS_URL = "https://connpass.com/api/v1/event/"
-
-  def self.find_event(keywords:, start: 1)
-    return RequestParser.request_and_parse_json(url: CONNPASS_URL, params: {keyword_or: keywords, count: 100, start: start, order: 1})
-  end
-
   def self.import_events!
-    start = 1
-    results_available = 0
-    begin
-      events_response = Connpass.find_event(keywords: Event::BOARDGAME_KEYWORDS + ["BoardGame", "AnalogGame"], start: start)
-      if events_response["results_available"].present?
-        results_available = events_response["results_available"]
-      end
-      start += events_response["results_returned"].to_i
-      res_events = events_response["events"] || []
-      current_events = Connpass.where(event_id: res_events.map{|res| res["event_id"]}.compact).index_by(&:event_id)
-      transaction do
-        res_events.each do |res|
-          if current_events[res["event_id"].to_s].present?
-            connpass_event = current_events[res["event_id"].to_s]
-          else
-            connpass_event = Connpass.new(event_id: res["event_id"].to_s)
-          end
-          connpass_event.merge_attributes_and_set_location_data(attrs: {
-            title: res["title"].to_s,
-            url: res["event_url"].to_s,
-            description: Sanitizer.basic_sanitize(res["description"].to_s),
-            limit_number: res["limit"],
-            address: res["address"].to_s,
-            place: res["place"].to_s,
-            lat: res["lat"],
-            lon: res["lon"],
-            owner_id: res["owner_id"],
-            owner_nickname: res["owner_nickname"],
-            owner_name: res["owner_display_name"],
-            started_at: res["started_at"],
-            ended_at: res["ended_at"]
-          })
-          connpass_event.save!
-          sleep 1
-        end
-      end
-    end while start < results_available
+    ConnpassOperation.import_events_from_keywords!(event_clazz: Connpass,keywords: Event::BOARDGAME_KEYWORDS + ["BoardGame", "AnalogGame"])
   end
 end

@@ -29,12 +29,8 @@
 #  index_events_on_title                    (title)
 #
 
-require 'google/apis/urlshortener_v1'
-
 class Event < ApplicationRecord
-  before_save do
-    self.address = Charwidth.normalize(self.address)
-  end
+  include EventCommon
 
   BOARDGAME_KEYWORDS = ["人狼", "ボドゲ", "ボードゲーム", "ぼーどげーむ", "boardgame", "アナログゲーム", "あなろぐげーむ", "analoggame"]
   BOARDGAME_CHECK_SEARCH_KEYWORD_POINTS = {
@@ -46,20 +42,25 @@ class Event < ApplicationRecord
     "ゲーム" => 2
   }
 
-  def boardgame_event?
-    return self.boardgame_event_confidence_score >= 9
+  before_save do
+    if self.url.size > 255
+      shorted_url = self.get_short_url
+      self.url = shorted_url
+      self.shortener_url = shorted_url
+    end
   end
 
-  def merge_attributes_and_set_location_data(attrs: {})
-    ops = OpenStruct.new(attrs.reject{|key, value| value.nil? })
-    if ops.started_at.present?
-      ops.started_at = DateTime.parse(ops.started_at)
+  def self.import_events!
+    # マルチスレッドで処理を実行するとCircular dependency detected while autoloading constantというエラーが出るのでその回避のためあらかじめeager_loadする
+    Rails.application.eager_load!
+    event_classes = [Connpass, Doorkeeper, Atnd, Peatix, Meetup]
+    Parallel.each(event_classes, in_threads: event_classes.size) do |event_class|
+      event_class.import_events!
     end
-    if ops.ended_at.present?
-      ops.ended_at = DateTime.parse(ops.ended_at)
-    end
-    self.attributes = self.attributes.merge(ops.to_h)
-    self.set_location_data
+  end
+
+  def boardgame_event?
+    return self.boardgame_event_confidence_score >= 9
   end
 
   def boardgame_event_confidence_score
@@ -76,60 +77,6 @@ class Event < ApplicationRecord
       end
     end
     return score
-  end
-
-  def self.import_events!
-    Connpass.import_events!
-    Doorkeeper.import_events!
-    Atnd.import_events!
-    Peatix.import_events!
-  end
-
-  def short_url
-    if shortener_url.blank?
-      convert_to_short_url!
-    end
-    return self.shortener_url
-  end
-
-  def set_location_data
-    if self.address.present? && self.lat.blank? && self.lon.blank?
-      geo_result = RequestParser.request_and_parse_json(
-        url: "https://maps.googleapis.com/maps/api/geocode/json",
-        params: {address: self.address, language: "ja", key: ENV.fetch("GOOGLE_API_KEY", "")}
-        )["results"].first
-      if geo_result.present?
-        self.lat = geo_result["geometry"]["location"]["lat"]
-        self.lon = geo_result["geometry"]["location"]["lng"]
-      end
-    elsif self.address.blank? && self.lat.present? && self.lon.present?
-      geo_result = RequestParser.request_and_parse_json(
-        url: "https://maps.googleapis.com/maps/api/geocode/json",
-        params: {latlng: [self.lat, self.lon].join(","), language: "ja", key: ENV.fetch("GOOGLE_API_KEY", "")}
-        )["results"].first
-      if geo_result.present?
-        searched_address = Charwidth.normalize(Sanitizer.scan_japan_address(geo_result["formatted_address"]).join).
-          gsub(/^[0-9【】、。《》「」〔〕・（）［］｛｝！＂＃＄％＆＇＊＋，－．／：；＜＝＞？＠＼＾＿｀｜￠￡￣\(\)\[\]<>{},!? \.\-\+\\~^='&%$#\"\'_\/;:*‼•一]/, "").
-          strip.
-          split(" ").
-          first
-        if searched_address.present?
-          self.address = searched_address
-        end
-      end
-    end
-    if self.address.present?
-      self.address = Charwidth.normalize(self.address).strip
-    end
-  end
-
-  def convert_to_short_url!
-    service = Google::Apis::UrlshortenerV1::UrlshortenerService.new
-    service.key = ENV.fetch("GOOGLE_API_KEY", "")
-    url_obj = Google::Apis::UrlshortenerV1::Url.new
-    url_obj.long_url = self.url
-    result = service.insert_url(url_obj)
-    update!(shortener_url: result.id)
   end
 
   def generate_tweet_text
@@ -150,5 +97,33 @@ class Event < ApplicationRecord
       text_size <= 140
     end
     return tweet_words.join("\n")
+  end
+
+  def self.export_frontend_masterdata_json
+    future_events = Event.where("? < started_at AND started_at < ?", Time.current, 1.year.since).order("started_at ASC").select{|event| event.boardgame_event? }
+    events_hash = future_events.map do |event|
+      end_at_string = if event.ended_at.blank?
+        ""
+      elsif event.ended_at.day == event.started_at.day
+        event.ended_at.strftime("%H:%M")
+      else
+        event.ended_at.strftime("%Y/%m/%d(#{%w(日 月 火 水 木 金 土)[event.started_at.wday]})%H:%M")
+      end
+      {
+        title: event.title,
+        url: event.url.to_s,
+        place: event.place.to_s,
+        address: event.address.to_s,
+        started_at: event.started_at.strftime("%Y/%m/%d(#{%w(日 月 火 水 木 金 土)[event.started_at.wday]})%H:%M"),
+        end_at: end_at_string,
+      }
+    end
+    video_ids = Youtube::VideoTag.where(tag: Event::BOARDGAME_KEYWORDS - ["人狼"]).pluck(:youtube_video_id).uniq.sample(100)
+    videos = Youtube::Video.where(id: video_ids)
+    json_hash = {
+      videos: videos.map{|video| {url: video.embed_url} },
+      events: events_hash
+    }
+    File.write(Rails.root.join("frontend", "public", "master_data.json"), json_hash.to_json)
   end
 end
