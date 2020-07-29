@@ -1,0 +1,69 @@
+image: "ruby:2.6"
+
+stages:
+  - crawl-and-publish
+
+.rails-mysql-base-template: &rails-mysql-base-template
+  services:
+    - mysql:5.7
+  variables:
+    MYSQL_ROOT_PASSWORD: ""
+    MYSQL_USER: "root"
+    MYSQL_PASSWORD: ""
+    MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    RAILS_MAX_THREADS: "5"
+    RAILS_ENV: production
+  before_script:
+    - apt --quiet update --yes
+    - curl -sL https://deb.nodesource.com/setup_10.x | bash -
+    - apt install --quiet --yes nodejs default-mysql-client unzip git
+    # https://qiita.com/masayuki14/items/c34eafb9d6130e2c5b67 より更新が必要そう
+    - sed -i 's/DEFAULT@SECLEVEL=2/DEFAULT@SECLEVEL=1/' /etc/ssl/openssl.cnf
+    - gem install bundler --no-document
+    - bundle install --jobs $(nproc) --path vendor/bundle
+    - echo "MYSQL_USERNAME='root'" > .env
+    - echo "MYSQL_PASSWORD=''" >> .env
+    - echo "MYSQL_HOST='mysql'" >> .env
+    - echo "TWITTER_CONSUMER_KEY='${TWITTER_CONSUMER_KEY}'" >> .env
+    - echo "TWITTER_CONSUMER_SECRET='${TWITTER_CONSUMER_SECRET}'" >> .env
+    - echo "TWITTER_BOT_ACCESS_TOKEN='${TWITTER_BOT_ACCESS_TOKEN}'" >> .env
+    - echo "TWITTER_BOT_ACCESS_TOKEN_SECRET='${TWITTER_BOT_ACCESS_TOKEN_SECRET}'" >> .env
+    - echo "GOOGLE_API_KEY='${GOOGLE_API_KEY}'" >> .env
+    - echo "GOOGLE_OAUTH_CLIENT_ID='${GOOGLE_OAUTH_CLIENT_ID}'" >> .env
+    - echo "GOOGLE_OAUTH_CLIENT_SECRET='${GOOGLE_OAUTH_CLIENT_SECRET}'" >> .env
+    - echo "GOOGLE_OAUTH_BOT_REFRESH_TOKEN='${GOOGLE_OAUTH_BOT_REFRESH_TOKEN}'" >> .env
+    - echo "MEETUP_API_KEY='${MEETUP_API_KEY}'" >> .env
+    - echo "BITLY_ACCESS_TOKEN='${BITLY_ACCESS_TOKEN}'" >> .env
+    - echo "DOORKEEPER_API_KEY='${DOORKEEPER_API_KEY}'" >> .env
+  cache:
+    untracked: true
+    paths:
+      - vendor
+
+crawlAndPublish:on-schedule:
+  only:
+    - schedules
+  <<: *rails-mysql-base-template
+  stage: crawl-and-publish
+  script:
+    - git config --local user.email "${GIT_COMMIT_USER_EMAIL}"
+    - git config --local user.name "${GIT_COMMIT_USER_NAME}"
+    - git remote set-url origin "https://${GITLAB_USER_NAME}:${GITLAB_ACCESS_TOKEN}@gitlab.com/taptappun/hackathon_portal.git"
+    - git checkout -b crawled-data origin/crawled-data
+    - bundle exec rails db:drop
+    - bundle exec rails db:create
+    - bundle exec rails db:migrate
+    - bundle exec rails db:seed
+    - bundle exec rails runner Event.import_events!
+    - bundle exec rails backup:export_active_records_data
+    - git add db/
+    - git commit -m "add `date +%Y-%m-%d-%H:%M:%S` crawled data"
+    - git push origin crawled-data
+    - bundle exec rails batch:event_bot_tweet
+    - bundle exec rails backup:export_active_records_data
+    - git add db/
+    - git commit -m "add `date +%Y-%m-%d-%H:%M:%S` tweeted data"
+    - git push origin crawled-data
+  artifacts:
+    paths:
+      - log/
