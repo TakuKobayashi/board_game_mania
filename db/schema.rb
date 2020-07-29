@@ -10,9 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_16_074748) do
+ActiveRecord::Schema.define(version: 2020_07_29_171558) do
 
-  create_table "events", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
+  create_table "events", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "event_id"
     t.string "type"
     t.string "title", null: false
@@ -36,7 +36,7 @@ ActiveRecord::Schema.define(version: 2019_10_16_074748) do
     t.index ["title"], name: "index_events_on_title"
   end
 
-  create_table "twitter_bots", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
+  create_table "twitter_bots", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "tweet", null: false
     t.string "tweet_id", null: false
     t.string "from_type"
@@ -48,21 +48,7 @@ ActiveRecord::Schema.define(version: 2019_10_16_074748) do
     t.index ["tweet_id"], name: "index_twitter_bots_on_tweet_id"
   end
 
-  create_table "youtube_video_relateds", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
-    t.integer "youtube_video_id", null: false
-    t.integer "to_youtube_video_id", null: false
-    t.index ["to_youtube_video_id"], name: "index_youtube_video_relateds_on_to_youtube_video_id"
-    t.index ["youtube_video_id"], name: "index_youtube_video_relateds_on_youtube_video_id"
-  end
-
-  create_table "youtube_video_tags", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
-    t.integer "youtube_video_id", null: false
-    t.string "tag", null: false
-    t.index ["tag"], name: "index_youtube_video_tags_on_tag"
-    t.index ["youtube_video_id", "tag"], name: "index_youtube_video_tags_on_youtube_video_id_and_tag", unique: true
-  end
-
-  create_table "youtube_videos", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
+  create_table "youtube_videos", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "video_id", default: "", null: false
     t.integer "youtube_channel_id"
     t.integer "youtube_category_id"
@@ -76,6 +62,7 @@ ActiveRecord::Schema.define(version: 2019_10_16_074748) do
     t.integer "favorite_count", default: 0, null: false
     t.bigint "view_count", default: 0, null: false
     t.boolean "is_related", default: false, null: false
+    t.text "tags"
     t.index ["published_at"], name: "index_youtube_videos_on_published_at"
     t.index ["video_id"], name: "index_youtube_videos_on_video_id", unique: true
     t.index ["youtube_channel_id"], name: "index_youtube_videos_on_youtube_channel_id"

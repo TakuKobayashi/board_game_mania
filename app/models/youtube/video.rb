@@ -25,9 +25,7 @@
 #
 
 class Youtube::Video < ApplicationRecord
-  has_many :relateds, class_name: 'Youtube::VideoRelated', foreign_key: :youtube_video_id
-  has_many :related_videos, through: :relateds, source: :to_video
-  has_many :tags, class_name: 'Youtube::VideoTag', foreign_key: :youtube_video_id
+  serialize :tags, JSON
 
   def embed_url
     return "https://www.youtube.com/embed/" + self.video_id + "?autoplay=1"
@@ -35,7 +33,6 @@ class Youtube::Video < ApplicationRecord
 
   def self.import_video!(youtube_video:, is_related: false)
     videos = []
-    id_and_tags = {}
     youtube_video.items.each do |item|
       video = Youtube::Video.new(
         video_id: item.id,
@@ -48,48 +45,12 @@ class Youtube::Video < ApplicationRecord
         like_count: item.statistics.try(:like_count).to_i,
         favorite_count: item.statistics.try(:favorite_count).to_i,
         view_count: item.statistics.try(:view_count).to_i,
-        is_related: is_related
+        is_related: is_related,
+        tags: item.snippet.tags
       )
-      id_and_tags[item.id] = item.snippet.tags
       videos << video
     end
     updates = [:published_at]
     Youtube::Video.import(videos, on_duplicate_key_update: updates)
-    Youtube::Video.import_tags(id_and_tags)
-  end
-
-  def self.import_tags(video_id_and_tags)
-    video_ids = Youtube::Video.where(video_id: video_id_and_tags.keys).pluck(:id, :video_id)
-    tags = video_ids.map do |id, video_id|
-      if video_id_and_tags[video_id].blank?
-        nil
-      else
-        results = []
-        video_id_and_tags[video_id].each do |tag|
-          sanitized = Sanitizer.basic_sanitize(tag)
-          next if sanitized.blank?
-          sanitize_split_tags = [sanitized]
-          if sanitized.length > 255
-            sanitize_split_tags = sanitized.split(" ")
-          end
-          results += sanitize_split_tags.map do |t|
-            yvt = Youtube::VideoTag.new(youtube_video_id: id, tag: t)
-            yvt.sharp
-            yvt
-          end
-        end
-        results
-      end
-    end.flatten.compact
-    Youtube::VideoTag.import(tags, on_duplicate_key_update: [:youtube_video_id, :tag])
-  end
-
-  def import_related_video!(youtube_video:)
-    Youtube::Video.import_video!(youtube_video: youtube_video, is_related: true)
-    video_ids = Youtube::Video.where(video_id: youtube_video.items.map(&:id)).pluck(:id)
-    relateds = video_ids.map do |to_id|
-      Youtube::VideoRelated.new(youtube_video_id: self.id, to_youtube_video_id: to_id)
-    end
-    Youtube::VideoRelated.import(relateds)
   end
 end
