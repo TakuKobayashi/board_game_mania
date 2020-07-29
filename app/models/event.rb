@@ -32,6 +32,9 @@
 class Event < ApplicationRecord
   include EventCommon
 
+  enum state: { active: 0, unactive: 1, closed: 2 }
+  enum informed_from: { web: 0, connpass: 1, atnd: 2, doorkeeper: 3, peatix: 4, meetup: 5, google_form: 6, twitter: 7 }
+
   BOARDGAME_KEYWORDS = ["人狼", "ボドゲ", "ボードゲーム", "ぼーどげーむ", "boardgame", "アナログゲーム", "あなろぐげーむ", "analoggame"]
   BOARDGAME_CHECK_SEARCH_KEYWORD_POINTS = {
     "人狼" => 3,
@@ -51,11 +54,40 @@ class Event < ApplicationRecord
   end
 
   def self.import_events!
+    keywords = HACKATHON_KEYWORDS + %w[はっかそん]
     # マルチスレッドで処理を実行するとCircular dependency detected while autoloading constantというエラーが出るのでその回避のためあらかじめeager_loadする
     Rails.application.eager_load!
-    event_classes = [Connpass, Doorkeeper, Atnd, Peatix, Meetup]
-    Parallel.each(event_classes, in_threads: event_classes.size) do |event_class|
-      event_class.import_events!
+    operation_modules = [ConnpassOperation, DoorkeeperOperation, PeatixOperation]
+    Parallel.each(operation_modules, in_threads: operation_modules.size) do |operation_module|
+      operation_module.import_events_from_keywords!(keywords: keywords)
+    end
+    ObjectSpace.each_object(ActiveRecord::Relation).each(&:reset)
+    GC.start
+    self.import_events_from_twitter!
+    GoogleFormEventOperation.load_and_imoport_events!(refresh_token: ENV.fetch('GOOGLE_OAUTH_BOT_REFRESH_TOKEN', ''))
+  end
+
+  def self.import_events_from_twitter!
+    TwitterEventOperation.import_events_from_keywords!(
+      keywords: Event::TWITTER_HACKATHON_KEYWORDS,
+      options: { limit_execute_second: 3600, default_max_tweet_id: nil },
+    )
+  end
+
+  def distribute_event_type
+    # TODO アイディアソンもここで振り分けたい
+    if self.boardgame_event?
+      self.type = BoardgameEvent.to_s
+    else
+      self.type = nil
+    end
+  end
+
+  def output_url
+    if self.short_url.present?
+      return self.short_url
+    else
+      return self.url
     end
   end
 
@@ -80,7 +112,7 @@ class Event < ApplicationRecord
   end
 
   def generate_tweet_text
-    tweet_words = [self.title, self.short_url]
+    tweet_words = [self.title, self.output_url]
     datetime_range = self.started_at.strftime("%Y/%m/%d(#{%w(日 月 火 水 木 金 土)[self.started_at.wday]})%H:%M")
     if self.ended_at.blank?
       datetime_range = datetime_range + "〜"
